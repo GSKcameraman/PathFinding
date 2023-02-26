@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6e5dec7c03f97d041ada8407e348f3c9
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - tileGround: {fileID: 5619147042065397077, guid: 521fd27e4c889ee4fa0f669defc60dd4, type: 3}
+  - tileWall: {fileID: 265348314443300486, guid: cd52f1f1240e75c46be6043b497f9183, type: 3}
+  - tileTree: {fileID: 5562090357136238726, guid: ade77d4aa62e9594c9c5d08d09c8a6ed, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
