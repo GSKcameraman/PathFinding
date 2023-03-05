@@ -66,6 +66,11 @@ public class Map : MonoBehaviour
     public Vector2Int current;
     public bool Started = false;
     bool work = false;
+
+
+    AudioSource source;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,6 +81,8 @@ public class Map : MonoBehaviour
         //graphgrid.SwitchTileStatus(Mathf.FloorToInt(height * 0.5f), width / 2, PathTile.status.OPEN);
 
         Debug.Log(graphgrid.GetTileWeight(0, 0));
+
+        source = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -273,6 +280,8 @@ public class Map : MonoBehaviour
             if (x == end.x && y == end.y)
             {
                 work = false;
+                
+                PaintPath(tile);
                 StopCoroutine(AStarTile());
             }
 
@@ -341,9 +350,22 @@ public class Map : MonoBehaviour
             open = open.OrderBy(x => x.f).ToList();
             closed.Add(tile);
             graphgrid.SwitchTileStatus(x, y, PathTile.status.CLOSED);
+            source.Stop();
+            source.pitch = 0.2f + (distance - tile.h)* 1.0f / distance * 0.8f;
+            source.Play();
             yield return new WaitForSeconds(.1f);
 
         }
         
+    }
+
+    public void PaintPath(PathTile t)
+    {
+        PathTile t1 = t;
+        while (t1 != null)
+        {
+            graphgrid.SwitchTileStatus(t1.x, t1.y, PathTile.status.PATH);
+            t1 = t1.parent;
+        }
     }
 }
