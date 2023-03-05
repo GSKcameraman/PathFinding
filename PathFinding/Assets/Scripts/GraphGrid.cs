@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GraphGrid : Grid<PathTile>
 {
@@ -167,6 +168,28 @@ public class GraphGrid : Grid<PathTile>
         }
         
 
+    }
+
+    public Vector2Int WorldPosToGraph(Vector3 pos)
+    {
+        Vector3 pos1 = pos - origin;
+        return new Vector2Int(Mathf.FloorToInt(pos1.x * 1.0f / cellsize), Mathf.FloorToInt(pos1.y * 1.0f / cellsize));
+    }
+
+    public void ResetTiles()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (gridArray[x, y].s != PathTile.status.UNREAD)
+                {
+                    gridArray[x, y].parent = null;
+                    SwitchTileStatus(x, y, PathTile.status.UNREAD);
+
+                }
+            }
+        }
     }
 
 }

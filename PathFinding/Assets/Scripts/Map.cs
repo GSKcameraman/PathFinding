@@ -33,6 +33,12 @@ public class Map : MonoBehaviour
     public GameObject graphOpen;
     public GameObject graphPath;
 
+    public GameObject graphStart;
+    public GameObject graphEnd;
+
+    GameObject instantStart = null;
+    GameObject instantEnd = null;
+
     public TMP_Dropdown dropdown;
 
 
@@ -46,15 +52,13 @@ public class Map : MonoBehaviour
 
     public bool Manhattan = false;
 
-    int startx;
-    int starty;
-    int endx;
-    int endy;
+    public TMP_Text text;
 
     int graphWidth;
     int graphHeight;
 
-    
+    public bool setStart = false;
+    public bool setEnd = false;
 
     char[,] mapstore;
 
@@ -88,13 +92,17 @@ public class Map : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Started && !work)
+        if (setStart && Input.GetMouseButtonDown(0))
         {
-            work = true;
-            Started = false;
-            StartCoroutine(AStarTile());
-            
+            SetStartPos();
+            setStart = false;
         }
+        if (setEnd && Input.GetMouseButtonDown(0))
+        {
+            SetEndPos();
+            setEnd = false;
+        }
+
     }
 
     public void readfile()
@@ -231,19 +239,12 @@ public class Map : MonoBehaviour
     }
 
 
-    public void SetStart(int x, int y)
-    {
-        startx = x;
-        starty = y;
-    }
-
-    public void SetEnd(int x, int y)
-    {
-        endx = x; endy = y;
-    }
 
     public void StartAStar()
     {
+        ReloadTiles();
+        open.Clear();
+        closed.Clear();
         PathTile st = graphgrid.GetTile(start.x, start.y);
         st.g = st.getWeight();
         if (Manhattan)
@@ -259,6 +260,8 @@ public class Map : MonoBehaviour
         st.f = heturisticsWeight * st.h + gWeight * st.g;
         open.Add(st);
         Started = true;
+        work = true;
+        StartCoroutine(AStarTile());
     }
 
     
@@ -280,8 +283,8 @@ public class Map : MonoBehaviour
             if (x == end.x && y == end.y)
             {
                 work = false;
-                
-                PaintPath(tile);
+
+                StartCoroutine(PaintPath(tile));
                 StopCoroutine(AStarTile());
             }
 
@@ -353,19 +356,89 @@ public class Map : MonoBehaviour
             source.Stop();
             source.pitch = 0.2f + (distance - tile.h)* 1.0f / distance * 0.8f;
             source.Play();
-            yield return new WaitForSeconds(.1f);
+            //yield return null;
+            yield return new WaitForSeconds(.05f);
 
         }
         
     }
 
-    public void PaintPath(PathTile t)
+    IEnumerator PaintPath(PathTile t)
     {
         PathTile t1 = t;
         while (t1 != null)
         {
             graphgrid.SwitchTileStatus(t1.x, t1.y, PathTile.status.PATH);
+            source.Stop();
+            source.pitch = 0.2f + t1.h * 1.0f / distance * 0.8f;
+            source.Play();
+
             t1 = t1.parent;
+            yield return new WaitForSeconds(0.02f);
+        }
+    }
+
+    void SetStartPos()
+    {
+        if (instantStart != null)
+        {
+            Destroy(instantStart);
+        }
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = cam.nearClipPlane;
+        Vector3 worldpos = cam.ScreenToWorldPoint(mousePos);
+        Vector3 Startpos = new Vector3(Mathf.Floor(worldpos.x / 2.0f) * 2.0f + 1.0f, Mathf.Floor(worldpos.y / 2.0f) * 2.0f + 1.0f, 8);
+        start = graphgrid.WorldPosToGraph(worldpos);
+        instantStart = Instantiate(graphStart, Startpos, Quaternion.identity);
+        source.pitch = 1;
+        source.Play();
+    }
+
+    void SetEndPos()
+    {
+        if (instantEnd != null)
+        {
+            Destroy(instantEnd);
+        }
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = cam.nearClipPlane;
+        Vector3 worldpos = cam.ScreenToWorldPoint(mousePos);
+        Vector3 Startpos = new Vector3(Mathf.Floor(worldpos.x / 2.0f) * 2.0f + 1.0f, Mathf.Floor(worldpos.y / 2.0f) * 2.0f + 1.0f, 8);
+        end = graphgrid.WorldPosToGraph(worldpos);
+        instantEnd = Instantiate(graphEnd, Startpos, Quaternion.identity);
+        source.pitch = 1;
+        source.Play();
+
+    }
+
+    public void StartSetStart()
+    {
+        setStart = true;
+        setEnd = false;
+    }
+
+    public void StartSetEnd()
+    {
+        setEnd = true;
+        setStart = false;
+    }
+
+    public void ReloadTiles()
+    {
+        StopAllCoroutines();
+        graphgrid.ResetTiles();
+    }
+
+    public void SwitchHeturistics()
+    {
+        Manhattan = !Manhattan;
+        if (Manhattan)
+        {
+            text.text = "Manhattan";
+        }
+        else
+        {
+            text.text = "Eculidean";
         }
     }
 }
