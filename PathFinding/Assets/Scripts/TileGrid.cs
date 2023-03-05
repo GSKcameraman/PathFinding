@@ -34,6 +34,12 @@ public class TileGrid : Grid<char>
             if (type == '.')
             {
                 targettile = tileGround;
+                if (tiles[x, y] == null)
+                {
+                    tiles[x, y] = (GameObject)Instantiate(targettile, new Vector3(x * cellsize + cellsize / 2, (y * cellsize + cellsize / 2), z + 1) + origin, Quaternion.identity);
+
+                }
+                return;
             }
             else if (type == 'T')
             {
@@ -46,7 +52,7 @@ public class TileGrid : Grid<char>
 
             if (tiles[x,y] == null)
             {
-                tiles[x, y] = Instantiate(targettile, new Vector3(x * cellsize + cellsize / 2, (y * cellsize + cellsize / 2), z) + origin, Quaternion.identity);
+                tiles[x, y] = (GameObject)Instantiate(targettile, new Vector3(x * cellsize + cellsize / 2, (y * cellsize + cellsize / 2), z) + origin, Quaternion.identity);
 
             }
 
@@ -66,11 +72,6 @@ public class TileGrid : Grid<char>
         }
     }
 
-    public void ChangeTile(int x, int y, tile t)
-    {
-
-    }
-
     public void PrintValue()
     {
         string s = "";
@@ -87,4 +88,46 @@ public class TileGrid : Grid<char>
         Debug.Log(s);
     }
 
+    public void ClearGraph()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                DestroyImmediate(tiles[x, y]);
+                
+                
+            }
+            
+        }
+
+    }
+
+    public void Reload(int w, int h)
+    {
+        ClearGraph();
+
+
+        width = w;
+        height = h;
+        gridArray = new char[w, h];
+        Debug.Log("new grid " + width + " " + height);
+        
+        tiles = new GameObject[w, h];
+
+    }
+    
+
+
+    ~TileGrid()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Destroy(tiles[x, y]);
+            }
+        }
+
+    }
 }
