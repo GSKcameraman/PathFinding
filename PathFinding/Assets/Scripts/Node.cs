@@ -25,7 +25,7 @@ public class Node : MonoBehaviour
 
     GameObject Line;
 
-    List<GameObject> neighbors = new List<GameObject>();
+    LinkedList<GameObject> neighbors = new LinkedList<GameObject>();
 
     SpriteRenderer srenderer;
 
@@ -38,10 +38,11 @@ public class Node : MonoBehaviour
 
     public void FindNeighbors()
     {
+        
         List<GameObject> l = GameObject.FindGameObjectsWithTag("Node").ToList();
-        for (int i = 0; i < l.Count; i++)
+        foreach (GameObject go in l)
         {
-            GameObject go = l[i];
+            
             Vector2 dir = (go.transform.position - this.transform.position).normalized;
             Vector2 pos = transform.position;
             RaycastHit2D hit = Physics2D.Raycast(pos, dir, float.PositiveInfinity, mask);
@@ -51,7 +52,7 @@ public class Node : MonoBehaviour
                 {
                     if (!neighbors.Contains(hit.collider.gameObject))
                     {
-                        neighbors.Add(hit.collider.gameObject);
+                        neighbors.AddLast(hit.collider.gameObject);
                     }
                     
                 }
@@ -99,10 +100,11 @@ public class Node : MonoBehaviour
 
     public void ConnectToNeighbor()
     {
-        for (int i=0; i<neighbors.Count; i++)
+        foreach (GameObject n in neighbors)
         {
-            neighbors[i].GetComponent<Node>().neighbors.Add(this.gameObject);
+            n.GetComponent<Node>().neighbors.AddLast(this.gameObject);
         }
+        
     }
 
     public int GetNumNeighors()
@@ -110,9 +112,10 @@ public class Node : MonoBehaviour
         return neighbors.Count;
     }
 
-    public GameObject GetNeighbor(int index)
+
+    public GameObject[] GetNeighbors()
     {
-        return neighbors[index];
+        return neighbors.ToArray();
     }
 
     public void SwitchStatus(status s1)

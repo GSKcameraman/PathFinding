@@ -124,10 +124,11 @@ public class Map : MonoBehaviour
             setEnd = false;
         }
 
-        if (!graphed || !waypointed)
+        if ((!graphed && !wayPoint) || (!waypointed && wayPoint) )
         {
             button.interactable = false;
         }
+        
         else
         {
             button.interactable = true;
@@ -364,12 +365,12 @@ public class Map : MonoBehaviour
     {
         if (graphed && waypointed)
         {
-            ReloadWayPoints();
-            ReloadTiles();
-            open.Clear();
 
             if (!wayPoint)
             {
+                ReloadTiles();
+                open.Clear();
+
                 PathTile st = graphgrid.GetTile(start.x, start.y);
                 st.g = st.getWeight();
                 if (Manhattan)
@@ -392,6 +393,8 @@ public class Map : MonoBehaviour
             }
             else
             {
+                ReloadWayPoints();
+
                 Node n = instantStart.GetComponent<Node>();
                 if (Manhattan)
                 {
@@ -576,9 +579,10 @@ public class Map : MonoBehaviour
                 StopCoroutine(AStarWayPoint());
             }
             int neighborscount = n.GetNumNeighors();
+            GameObject[] neighbors = n.GetNeighbors();
             for (int i = 0; i < neighborscount; i++)
             {
-                GameObject g1 = n.GetNeighbor(i);
+                GameObject g1 = neighbors[i];
                 if (g1 == null)
                 {
                     continue;
@@ -661,7 +665,7 @@ public class Map : MonoBehaviour
             n.ConnectParent();
             
             gx = n.parentNode;
-            mixer.SetFloat("pitch", Mathf.Clamp(0.5f + n.h * 1.0f / distance * 0.8f, 0.5f, 2));
+            mixer.SetFloat("pitch", Mathf.Clamp(0.5f + n.h * 1.0f / distance * 0.5f, 0.5f, 2));
             //n.Clear();
             yield return new WaitForSeconds(0.1f);
         }
@@ -759,12 +763,6 @@ public class Map : MonoBehaviour
 
             }
         }
-    }
-
-    public void ReloadAll()
-    {
-        ReloadTiles();
-        ReloadWayPoints();
         instantEnd.GetComponent<Node>().parentNode = null;
         instantEnd.GetComponent<Node>().SwitchStatus(global::Node.status.UNREAD);
         instantEnd.GetComponent<SpriteRenderer>().color = Color.white;
@@ -773,6 +771,13 @@ public class Map : MonoBehaviour
         {
             Destroy(line);
         }
+
+    }
+
+    public void ReloadAll()
+    {
+        ReloadTiles();
+        ReloadWayPoints();
     }
     public void SwitchHeturistics()
     {
