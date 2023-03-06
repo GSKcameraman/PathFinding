@@ -442,6 +442,8 @@ public class Map : MonoBehaviour
                 StopCoroutine(AStarTile());
             }
 
+            graphgrid.SwitchTileStatus(x, y, PathTile.status.CLOSED);
+
             PathTile[] t = new PathTile[8];
 
             t[0] = graphgrid.GetTile(x + 1, y + 1);
@@ -459,21 +461,13 @@ public class Map : MonoBehaviour
                 {
 
                     continue;
-                    int ng = tile.g + t[i].getWeight();
-                    int f1 = ng * gWeight + t[i].h * heturisticsWeight;
-                    if (f1 < t[i].f)
-                    {
-                        t[i].parent = tile;
-                        t[i].g = ng;
-                        t[i].f = f1;
-                    }
 
                 }
                 else if (t[i] == null)
                 {
                     continue;
                 }
-                else if (open.Contains(t[i]))
+                else if (t[i].s == PathTile.status.OPEN)
                 {
                     int ng = tile.g + t[i].getWeight();
                     int h = t[i].h;
@@ -515,12 +509,12 @@ public class Map : MonoBehaviour
 
 
                     graphgrid.SwitchTileStatus(t[i].getX(), t[i].getY(), PathTile.status.OPEN);
-
+                    yield return null;
                 }
             }
             open = open.OrderBy(x => x.f).ToList();
 
-            graphgrid.SwitchTileStatus(x, y, PathTile.status.CLOSED);
+            
 
             mixer.SetFloat("pitch", Mathf.Clamp(0.5f + (distance - tile.h) * 1.0f / distance * 0.5f, 0.5f, 2));
             //source.pitch = Mathf.Clamp(0.2f + (distance - tile.h)* 1.0f / distance * 0.8f, 0.1f, 2);
@@ -694,7 +688,7 @@ public class Map : MonoBehaviour
         n.x = pos.x;
         n.y = pos.y;
         n.FindNeighbors();
-        n.ConnectToNeighbor();
+        //n.ConnectToNeighbor();
         n.PrintNumNeighbors();
         source.pitch = 1;
         source.Play();
@@ -717,7 +711,7 @@ public class Map : MonoBehaviour
         n.x = pos.x;
         n.y = pos.y;
         n.FindNeighbors();
-        n.ConnectToNeighbor();
+        //n.ConnectToNeighbor();
         n.PrintNumNeighbors();
 
 

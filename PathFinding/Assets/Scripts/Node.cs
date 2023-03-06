@@ -53,6 +53,7 @@ public class Node : MonoBehaviour
                     if (!neighbors.Contains(hit.collider.gameObject))
                     {
                         neighbors.AddLast(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<Node>().neighbors.AddLast(this.gameObject);
                     }
                     
                 }
