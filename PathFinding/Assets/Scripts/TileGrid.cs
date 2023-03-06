@@ -117,6 +117,16 @@ public class TileGrid : Grid<char>
 
     }
     
+    public Vector3 GetWorldPos(int x, int y)
+    {
+        return new Vector3(x * cellsize + cellsize / 2, (y * cellsize + cellsize / 2), z - 3) + origin;
+    }
+
+    public Vector2Int WorldPosToGraph(Vector3 pos)
+    {
+        Vector3 pos1 = pos - origin;
+        return new Vector2Int(Mathf.FloorToInt(pos1.x * 1.0f / cellsize), Mathf.FloorToInt(pos1.y * 1.0f / cellsize));
+    }
 
 
     ~TileGrid()

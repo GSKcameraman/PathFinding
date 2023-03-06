@@ -192,4 +192,9 @@ public class GraphGrid : Grid<PathTile>
         }
     }
 
+
+    public Vector3 GetWorldPos(int x, int y)
+    {
+        return new Vector3(x * cellsize + cellsize / 2, (y * cellsize + cellsize / 2), z - 0.5f) + origin;
+    }
 }
