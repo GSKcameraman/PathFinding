@@ -14,4 +14,5 @@ This algorithm works best with parallel maps, and with map have line goes diagon
 And it takes long to mark, and even longer to connect the waypoints (O(n<sup>2</sup>)).
 
 [video demostration](https://youtu.be/T7ux7Xb4xzA)
+
 [itch.io](https://gskcameraman.itch.io/game-ai-project-a-star)
