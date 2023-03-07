@@ -13,5 +13,5 @@ The waypoints are also auto-processed. It uses the original tile system to detec
 This algorithm works best with parallel maps, and with map have line goes diagonal, it would likely broke and mark every dot along the line.
 And it takes long to mark, and even longer to connect the waypoints (O(n<sup>2</sup>)).
 
-video demostration](https://youtu.be/T7ux7Xb4xzA)
+[video demostration](https://youtu.be/T7ux7Xb4xzA)
 [itch.io](https://gskcameraman.itch.io/game-ai-project-a-star)
